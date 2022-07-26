@@ -10,16 +10,22 @@
 
         <Label text="Record for (duration), every (frequency)" class="header" horizontalAlignment="center" textWrap="true"></Label>
 
-
         <Label text="DURATION" textWrap="true" horizontalAlignment="center" ></Label>
-        <TextField hint="min"></TextField>
-        <TextField hint="sec"></TextField>
+        <TextField id="durMin" hint="min"></TextField>
+        <TextField  id="durSec" hint="sec"></TextField>
     
         <Label text="FREQUENCY" textWrap="true" horizontalAlignment="center" ></Label>
-        <TextField hint="min"></TextField>
-        <TextField hint="sec"></TextField>
+        <TextField  hint="min"></TextField>
+        <TextField  hint="sec"></TextField>
 
-        <Button text="START" tap="{{ start }}" class="-primary"></Button>
-        <Button text="STOP" tap="{{ stop }}" class="-primary"></Button>
+        <!-- something wrong with tap function?-->
+        <Button id="TestButton" text="Test Button" tap="test($event)" class="-primary"></Button>
+        <Label id="TestLabel" text="Test Label" textWrap="true" horizontalAlignment="center" ></Label>
+        
+        <Button text="START" tap="start" class="-primary"></Button>
+        <Button text="STOP" tap="stop" class="-primary"></Button>
+
+        <!-- One way binding syntax--> 
+        <!--<Button (tap)='onButtonTap($event)'></Button> -->
     </StackLayout>
 </Page>
