@@ -3,11 +3,9 @@
     xmlns="http://schemas.nativescript.org/tns.xsd">
 
     <ActionBar>
-        <Label text="AudioMoth" />
+        <Label text="AudioMoth2" />
     </ActionBar>
-    
-
     <StackLayout orientation="vertical">
-        <Button tap='onTap($event)'></Button>
+        <Button tap="onButtonTap($event)"></Button>
     </StackLayout>
 </Page>
