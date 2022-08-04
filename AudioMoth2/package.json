@@ -6,6 +6,9 @@
   "dependencies": {
     "@nativescript/core": "~8.2.0",
     "@nativescript/theme": "~3.0.2",
+    "extendable-media-recorder": "^6.6.8",
+    "nativescript-audio": "^6.2.6",
+    "nativescript-task-dispatcher": "^3.1.1",
     "nativescript-ui-sidedrawer": "~10.0.2",
     "rxjs": "~7.5.0",
     "tns-core-modules": "^6.5.27"
@@ -14,6 +17,7 @@
     "@nativescript/android": "8.2.4",
     "@nativescript/types": "~8.2.0",
     "@nativescript/webpack": "~5.0.6",
+    "@types/dom-mediacapture-record": "^1.0.11",
     "typescript": "~4.5.5"
   }
 }

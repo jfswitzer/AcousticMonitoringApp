@@ -6,6 +6,17 @@
         <Label text="AudioMoth2" />
     </ActionBar>
     <StackLayout orientation="vertical">
-        <Button tap="onButtonTap($event)"></Button>
+
+        <Label text="Duration" class="h2 text-center" textWrap="true"/>
+        <TextField text="{{ durMin }}" hint="durMin" />
+        <TextField text="{{ durSec }}" hint="durSec"  />
+
+        <Label text="Frequency" class="h2 text-center" textWrap="true"/>
+        <TextField text="{{ freqMin }}" hint="freqMin" />
+        <TextField text="{{ freqSec }}" hint="freqSec" />
+        
+        <Button text="Start" tap="{{ onTap }}" class="-primary" ></Button>
+        <Button text="Stop" tap="{{ stop }}" class="-primary" ></Button>
+    
     </StackLayout>
 </Page>

@@ -1,6 +1,4 @@
 import { Application, EventData, NavigatedData, Page } from '@nativescript/core'
-import { View } from "tns-core-modules/ui/core/view";
-import { Button } from 'tns-core-modules/ui/button'
 import { HomeViewModel } from './home-view-model'
 
 
@@ -9,9 +7,9 @@ export function onNavigatingTo(args: NavigatedData) {
   page.bindingContext = new HomeViewModel()
 }
 
-//not working, does not appear in console 
-export function onButtonTap(args: EventData) {
-  //const button = <View><unknown>args.object
-  console.info("Button tapped");
-}
+
+
+//1. start button--> disable button after clicking, enable stop button 
+//2. stop button --> disable after clicking, enable start button, cancel task dispatcher 
+//3. make call to NTD 
 
