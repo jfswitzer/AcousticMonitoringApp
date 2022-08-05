@@ -1,0 +1,22 @@
+<Page
+    navigatingTo="onNavigatingTo"
+    xmlns="http://schemas.nativescript.org/tns.xsd">
+
+    <ActionBar>
+        <Label text="AudioMoth3" />
+    </ActionBar>
+    <StackLayout orientation="vertical">
+
+        <Label text="Duration" class="h2 text-center" textWrap="true"/>
+        <TextField text="{{ durMin }}" hint="durMin" />
+        <TextField text="{{ durSec }}" hint="durSec"  />
+
+        <Label text="Frequency" class="h2 text-center" textWrap="true"/>
+        <TextField text="{{ freqMin }}" hint="freqMin" />
+        <TextField text="{{ freqSec }}" hint="freqSec" />
+        
+        <Button text="Start" tap="{{ onTap }}" class="-primary" ></Button>
+        <Button text="Stop" tap="{{ stop }}" class="-primary" ></Button>
+    
+    </StackLayout>
+</Page>
