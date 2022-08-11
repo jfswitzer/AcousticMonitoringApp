@@ -5,7 +5,8 @@ import { SelectedPageService } from '../shared/selected-page-service'
 
 import { Task, SimpleTask } from "nativescript-task-dispatcher/tasks";
 //import { toSeconds } from "nativescript-task-dispatcher/utils/time-converter";
-
+import { appTasks } from "../tasks/index";
+import { demoTaskGraph } from "../tasks/graph";
 import { taskDispatcher } from "nativescript-task-dispatcher";
 export class HomeViewModel extends Observable {
   constructor() {
@@ -78,8 +79,15 @@ export class HomeViewModel extends Observable {
     this.freq = this.freq + this.freqSecInt;
     console.info("dur (ms): " + this.dur)
     console.info("freq(s): " + this.freq)
+    //initialize demograph
+    taskDispatcher.init(appTasks, demoTaskGraph, {
+      // Recommended, to see debug and info messages while developing
+      enableLogging: true,
+    });
     //trigger the task dispatcher
     console.info("next call: emitStartEvent()")
+    console.info("startEvent emitted!!")
+    taskDispatcher.emitEvent("startEvent");
     //this.emitStartEvent();
 
   }
@@ -89,18 +97,17 @@ export class HomeViewModel extends Observable {
     //taskDispatcher.emitEvent("stopEvent");
   }
 
+  /*
   async emitStartEvent() {
     const isReady = await taskDispatcher.isReady();
     //COMMENT OUT IF STATEMENT
-    /*
     if (!isReady) {
       const tasksNotReady = await taskDispatcher.tasksNotReady;
       console.log(`The following tasks are not ready!: ${tasksNotReady}`);
       await taskDispatcher.prepare();
     }
-    */
     console.info("startEvent emitted!!")
     taskDispatcher.emitEvent("startEvent");
   }
-
+  */
 }

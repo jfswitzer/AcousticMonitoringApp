@@ -11,18 +11,13 @@ export const appTasks: Array<Task> = [
 
                 //THIS IS WHERE AUDIO RECORDING WOULD GO 
                 //how to get the user input here?
-                
                 //mediaRecorder.start()
+                log("Recording start!");
                 const timeoutId = setTimeout(() => {
-
-                    log("Recording start!");
+                    log("Recording stop!");
                     resolve();
-
-                    
                 }, 2000); //2 second recording = 2000 
                 //mediaRecorder.stop()
-                
-
                 onCancel(() => {
                     clearTimeout(timeoutId);
                     resolve();

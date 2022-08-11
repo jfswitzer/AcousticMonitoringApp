@@ -13,7 +13,7 @@ class DemoTaskGraph implements TaskGraph {
         on(
             "startEvent",
             //replace 2 minutes with input 
-            run("record").every(2, "minutes").cancelOn("stopEvent")
+            run("record").every(1, "minutes").cancelOn("stopEvent")
         );
     }
 }
