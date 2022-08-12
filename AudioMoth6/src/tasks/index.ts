@@ -15,7 +15,7 @@ export const appTasks: Array<Task> = [
                 const timeoutId = setTimeout(() => {
                     log("Recording stop!");
                     resolve();
-                }, 2000); //2 second recording = 2000 
+                }, 10000); //10 second recording = 2000 
                 //mediaRecorder.stop()
                 onCancel(() => {
                     clearTimeout(timeoutId);

@@ -5,7 +5,7 @@ import { SelectedPageService } from '../shared/selected-page-service'
 
 import { Task, SimpleTask } from "nativescript-task-dispatcher/tasks";
 //import { toSeconds } from "nativescript-task-dispatcher/utils/time-converter";
-import { appTasks } from "../tasks/index";
+//import { appTasks } from "../tasks/index";
 import { demoTaskGraph } from "../tasks/graph";
 import { taskDispatcher } from "nativescript-task-dispatcher";
 export class HomeViewModel extends Observable {
@@ -24,7 +24,7 @@ export class HomeViewModel extends Observable {
   private dur: number
   private freq: number 
 
-  //private appTask: Array<Task>
+  private appTasks: Array<Task>
 
   get durMin(): string {
     return this._durMin
@@ -81,24 +81,40 @@ export class HomeViewModel extends Observable {
     this.freq = this.freq + this.freqSecInt;
     console.info("dur (ms): " + this.dur)
     console.info("freq(s): " + this.freq)
-    //initialize demograph
-    /*
-    taskDispatcher.init(appTasks, demoTaskGraph, {
-      enableLogging: true,
-    });
-    */
-    taskDispatcher.init(appTasks, demoTaskGraph, {
-      enableLogging: true,
-    });
 
+    //initialize appTask
+    this.initializeAppTasks();
+    //load taskgraph
+    taskDispatcher.init(this.appTasks, demoTaskGraph, {
+      enableLogging: true,
+    });
     //trigger the task dispatcher
     console.info("startEvent emitted!!")
-    //taskDispatcher.emitEvent("startEvent");
     this.emitStartEvent();
 
   }
-
-  // initializeAppTasks(){}
+   initializeAppTasks(){
+    this.appTasks =  [
+      new SimpleTask("record", ({ log, onCancel, remainingTime}) => new Promise((resolve) => {
+                  log(`Available time: ${remainingTime()}`);
+                  //THIS IS WHERE AUDIO RECORDING WOULD GO 
+                  //how to get the user input here?
+                  //mediaRecorder.start()
+                  log("Recording start!");
+                  const timeoutId = setTimeout(() => {
+                      log("Recording stop!");
+                      resolve();
+                  }, this.dur); //2 second recording = 2000 
+                  //mediaRecorder.stop()
+                  onCancel(() => {
+                      clearTimeout(timeoutId);
+                      resolve();
+                  });
+  
+              })
+      ),
+    ];
+  }
 
   stop() {
     //TODO:disable button, enable start button 
@@ -117,6 +133,4 @@ export class HomeViewModel extends Observable {
     }
     taskDispatcher.emitEvent("startEvent");
   }
-  
-  
 }
