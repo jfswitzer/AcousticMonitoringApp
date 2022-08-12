@@ -24,6 +24,8 @@ export class HomeViewModel extends Observable {
   private dur: number
   private freq: number 
 
+  //private appTask: Array<Task>
+
   get durMin(): string {
     return this._durMin
   }
@@ -80,34 +82,38 @@ export class HomeViewModel extends Observable {
     console.info("dur (ms): " + this.dur)
     console.info("freq(s): " + this.freq)
     //initialize demograph
+    /*
     taskDispatcher.init(appTasks, demoTaskGraph, {
-      // Recommended, to see debug and info messages while developing
       enableLogging: true,
     });
+    */
+
     //trigger the task dispatcher
-    console.info("next call: emitStartEvent()")
     console.info("startEvent emitted!!")
-    taskDispatcher.emitEvent("startEvent");
-    //this.emitStartEvent();
+    //taskDispatcher.emitEvent("startEvent");
+    this.emitStartEvent();
 
   }
+
+  // initializeAppTasks(){}
   stop() {
     //TODO:disable button, enable start button 
     console.info("stopEvent emitted!!")
-    //taskDispatcher.emitEvent("stopEvent");
+    taskDispatcher.emitEvent("stopEvent");
   }
 
-  /*
+  
   async emitStartEvent() {
     const isReady = await taskDispatcher.isReady();
     //COMMENT OUT IF STATEMENT
+    /*
     if (!isReady) {
       const tasksNotReady = await taskDispatcher.tasksNotReady;
       console.log(`The following tasks are not ready!: ${tasksNotReady}`);
       await taskDispatcher.prepare();
     }
-    console.info("startEvent emitted!!")
+    */
     taskDispatcher.emitEvent("startEvent");
+    
   }
-  */
 }

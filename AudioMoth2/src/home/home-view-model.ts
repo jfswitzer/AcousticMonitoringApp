@@ -82,11 +82,13 @@ export class HomeViewModel extends Observable {
   
   async emitStartEvent() {
     const isReady = await taskDispatcher.isReady();
+    /*
     if (!isReady) {
       const tasksNotReady = await taskDispatcher.tasksNotReady;
       console.log(`The following tasks are not ready!: ${tasksNotReady}`);
       await taskDispatcher.prepare();
     }
+    */
     taskDispatcher.emitEvent("startEvent");
   }
 
