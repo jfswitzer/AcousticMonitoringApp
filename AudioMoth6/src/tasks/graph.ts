@@ -4,8 +4,11 @@ import {
     RunnableTaskDescriptor,
 } from "nativescript-task-dispatcher/tasks/graph";
 
-
-class DemoTaskGraph implements TaskGraph {
+export class DemoTaskGraph implements TaskGraph {
+    private freq: number
+    constructor(num){
+        this.freq = num;
+    }
     async describe(
         on: EventListenerGenerator,
         run: RunnableTaskDescriptor
@@ -17,4 +20,4 @@ class DemoTaskGraph implements TaskGraph {
         );
     }
 }
-export const demoTaskGraph = new DemoTaskGraph();
+//export const demoTaskGraph = new DemoTaskGraph();

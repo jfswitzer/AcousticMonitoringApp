@@ -1,12 +1,12 @@
 
 import { Observable } from '@nativescript/core'
-
 import { SelectedPageService } from '../shared/selected-page-service'
+import { MediaRecorder } from 'extendable-media-recorder';
 
 import { Task, SimpleTask } from "nativescript-task-dispatcher/tasks";
 //import { toSeconds } from "nativescript-task-dispatcher/utils/time-converter";
 //import { appTasks } from "../tasks/index";
-import { demoTaskGraph } from "../tasks/graph";
+import { DemoTaskGraph } from "../tasks/graph";
 import { taskDispatcher } from "nativescript-task-dispatcher";
 export class HomeViewModel extends Observable {
   constructor() {
@@ -84,6 +84,10 @@ export class HomeViewModel extends Observable {
 
     //initialize appTask
     this.initializeAppTasks();
+
+    //initialise demoTaskGraph
+    var demoTaskGraph = new DemoTaskGraph(100);//change to freq
+
     //load taskgraph
     taskDispatcher.init(this.appTasks, demoTaskGraph, {
       enableLogging: true,
@@ -95,16 +99,17 @@ export class HomeViewModel extends Observable {
   }
    initializeAppTasks(){
     this.appTasks =  [
-      new SimpleTask("record", ({ log, onCancel, remainingTime}) => new Promise((resolve) => {
+      new SimpleTask("record", ({ log, onCancel, remainingTime}) => new Promise(async (resolve) => {
                   log(`Available time: ${remainingTime()}`);
-                  //THIS IS WHERE AUDIO RECORDING WOULD GO 
-                  //how to get the user input here?
+                  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                  //RUNTIME ERROR
+                  const mediaRecorder = new MediaRecorder(stream);
                   //mediaRecorder.start()
                   log("Recording start!");
                   const timeoutId = setTimeout(() => {
                       log("Recording stop!");
                       resolve();
-                  }, this.dur); //2 second recording = 2000 
+                  }, this.dur); 
                   //mediaRecorder.stop()
                   onCancel(() => {
                       clearTimeout(timeoutId);
@@ -121,7 +126,6 @@ export class HomeViewModel extends Observable {
     console.info("stopEvent emitted!!")
     taskDispatcher.emitEvent("stopEvent");
   }
-
   
   async emitStartEvent() {
     const isReady = await taskDispatcher.isReady();

@@ -21,7 +21,6 @@ export const appTasks: Array<Task> = [
                     clearTimeout(timeoutId);
                     resolve();
                 });
-
             })
     ),
 ];

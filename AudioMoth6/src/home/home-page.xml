@@ -3,7 +3,7 @@
     xmlns="http://schemas.nativescript.org/tns.xsd">
 
     <ActionBar>
-        <Label text="AudioMoth5" />
+        <Label text="AudioMoth6" />
     </ActionBar>
     <StackLayout orientation="vertical">
 
@@ -18,5 +18,6 @@
         <Button text="Start" tap="{{ onTap }}" class="-primary" ></Button>
         <Button text="Stop" tap="{{ stop }}" class="-primary" ></Button>
     
+        
     </StackLayout>
 </Page>
