@@ -1,3 +1,4 @@
+/*
 import { Task, SimpleTask } from "nativescript-task-dispatcher/tasks";
 import { toSeconds } from "nativescript-task-dispatcher/utils/time-converter";
 //import { MediaRecorder } from 'extendable-media-recorder';
@@ -24,5 +25,5 @@ export const appTasks: Array<Task> = [
             })
     ),
 ];
-
+*/
 

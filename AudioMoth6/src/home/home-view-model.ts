@@ -65,6 +65,7 @@ export class HomeViewModel extends Observable {
   }
   onTap() {
     //TODO:disable button, enable stop butt
+    //var startbtn = document.getElementById("startbtn")
     //convert from string to int 
     this.durMinInt = +this.durMin
     this.durSecInt = +this.durSec
@@ -101,16 +102,31 @@ export class HomeViewModel extends Observable {
     this.appTasks =  [
       new SimpleTask("record", ({ log, onCancel, remainingTime}) => new Promise(async (resolve) => {
                   log(`Available time: ${remainingTime()}`);
-                  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                  //var audioChunks
+                  //const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                   //RUNTIME ERROR
-                  const mediaRecorder = new MediaRecorder(stream);
+                  //const mediaRecorder = new MediaRecorder(stream);
+                  //TODO:Initialize recordedAudio/audioDownload in .xml file)
                   //mediaRecorder.start()
                   log("Recording start!");
                   const timeoutId = setTimeout(() => {
+                      //mediaRecorder.stop()
                       log("Recording stop!");
+                      /*
+                      if (mediaRecorder.state == "inactive"){
+                        let blob = new Blob(audioChunks,{type:'audio/x-mpeg-3'});
+                        recordedAudio.src = URL.createObjectURL(blob);
+                        recordedAudio.controls=true;
+                        recordedAudio.autoplay=true;
+                        audioDownload.href = recordedAudio.src;
+                        audioDownload.download = 'mp3';
+                        audioDownload.innerHTML = 'download';
+                        audioDownload.onclick();
+                     }
+                     */
                       resolve();
                   }, this.dur); 
-                  //mediaRecorder.stop()
+                  
                   onCancel(() => {
                       clearTimeout(timeoutId);
                       resolve();
