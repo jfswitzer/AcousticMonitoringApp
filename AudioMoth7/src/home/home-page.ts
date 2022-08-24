@@ -8,7 +8,6 @@ export function onNavigatingTo(args: NavigatedData) {
   page.bindingContext = new HomeViewModel()
 }
 
-
 export function onDrawerButtonTap(args: EventData) {
   const sideDrawer = <RadSideDrawer>Application.getRootView()
   sideDrawer.showDrawer()

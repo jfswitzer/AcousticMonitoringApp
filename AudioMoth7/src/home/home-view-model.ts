@@ -1,16 +1,29 @@
-
 import { Observable } from '@nativescript/core'
 import { SelectedPageService } from '../shared/selected-page-service'
 import { MediaRecorder } from 'extendable-media-recorder';
+import {
+  Application,
+  Dialogs,
+  File,
+  isAndroid,
+  knownFolders,
+  Page,
+  Slider,
+  Utils
+} from '@nativescript/core';
 
 import { Task, SimpleTask } from "nativescript-task-dispatcher/tasks";
-//import { toSeconds } from "nativescript-task-dispatcher/utils/time-converter";
-//import { appTasks } from "../tasks/index";
 import { DemoTaskGraph } from "../tasks/graph";
 import { taskDispatcher } from "nativescript-task-dispatcher";
+import {
+  AudioRecorderOptions,
+  TNSRecorder
+} from 'nativescript-audio';
+
 export class HomeViewModel extends Observable {
   constructor() {
     super()
+
     SelectedPageService.getInstance().updateSelectedPage('Home')
   }
   private _durMin: string
@@ -21,6 +34,7 @@ export class HomeViewModel extends Observable {
   private durSecInt: number
   private freqMinInt: number
   private freqSecInt: number
+  private _recorder: TNSRecorder;
 
   private dur: number
   private freq: number 
@@ -99,32 +113,47 @@ export class HomeViewModel extends Observable {
     this.emitStartEvent();
 
   }
+  private platformExtension() {
+    // 'mp3'
+    return `${Application.android ? 'm4a' : 'caf'}`;
+  }
    initializeAppTasks(){
     this.appTasks =  [
       new SimpleTask("record", ({ log, onCancel, remainingTime}) => new Promise(async (resolve) => {
                   log(`Available time: ${remainingTime()}`);
-                  var audioChunks
-                  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                  //RUNTIME ERROR
-                  var mediaRecorder = new MediaRecorder(stream);
-                  //TODO:Initialize recordedAudio/audioDownload in .xml file)
-                  //mediaRecorder.start()
+                  this._recorder = new TNSRecorder();
+                  this._recorder.debug = true; 
+                  const audioFolder = knownFolders.currentApp().getFolder('audio');
+                  let androidFormat = 2;//android.media.MediaRecorder.OutputFormat.MPEG_4;
+                  let androidEncoder = 3;//android.media.MediaRecorder.AudioEncoder.AAC;
+                  const recordingPath = `${
+                    audioFolder.path
+                  }/recording.${this.platformExtension()}`;
+
+                  const recorderOptions: AudioRecorderOptions = {
+                    filename: recordingPath,
+            
+                    format: androidFormat,
+            
+                    encoder: androidEncoder,
+            
+                    metering: true,
+            
+                    infoCallback: infoObject => {
+                      console.log(JSON.stringify(infoObject));
+                    },
+            
+                    errorCallback: errorObject => {
+                      console.log(JSON.stringify(errorObject));
+                    }
+                  };
+
                   log("Recording start!");
+                  this._recorder.start(recorderOptions);
                   const timeoutId = setTimeout(() => {
-                      //mediaRecorder.stop()
                       log("Recording stop!");
-                      /*
-                      if (mediaRecorder.state == "inactive"){
-                        let blob = new Blob(audioChunks,{type:'audio/x-mpeg-3'});
-                        recordedAudio.src = URL.createObjectURL(blob);
-                        recordedAudio.controls=true;
-                        recordedAudio.autoplay=true;
-                        audioDownload.href = recordedAudio.src;
-                        audioDownload.download = 'mp3';
-                        audioDownload.innerHTML = 'download';
-                        audioDownload.onclick();
-                     }
-                     */
+                      this._recorder.stop();
+                      
                       resolve();
                   }, 2000); //change to this.dur
                   
