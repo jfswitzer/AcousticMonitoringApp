@@ -14,9 +14,7 @@ export class DemoTaskGraph implements TaskGraph {
         run: RunnableTaskDescriptor
     ): Promise<void> {
         on(
-            "startEvent",
-            //replace 2 minutes with input 
-            run("record").every(1, "minutes").cancelOn("stopEvent")
+            "startEvent",run("record").every(this.freq, "minutes").cancelOn("stopEvent")
         );
     }
 }

@@ -23,6 +23,9 @@ import {
 export class HomeViewModel extends Observable {
   constructor() {
     super()
+    this.message = `Status: Waiting to Start`;
+    this.startBtnStatus = 'true';
+    this.stopBtnStatus = 'false';
 
     SelectedPageService.getInstance().updateSelectedPage('Home')
   }
@@ -35,11 +38,45 @@ export class HomeViewModel extends Observable {
   private freqMinInt: number
   private freqSecInt: number
   private _recorder: TNSRecorder;
+  private _message: string
+  private _startBtnStatus: string
+  private _stopBtnStatus: string
 
   private dur: number
   private freq: number 
 
   private appTasks: Array<Task>
+
+  get message(): string {
+    return this._message
+  }
+
+  set message(value: string) {
+    if (this._message !== value) {
+      this._message = value
+      this.notifyPropertyChange('message', value)
+    }
+  }
+  get startBtnStatus(): string {
+    return this._startBtnStatus
+  }
+
+  set startBtnStatus(value: string) {
+    if (this._startBtnStatus !== value) {
+      this._startBtnStatus= value
+      this.notifyPropertyChange('startBtnStatus', value)
+    }
+  }
+  get stopBtnStatus(): string {
+    return this._stopBtnStatus
+  }
+
+  set stopBtnStatus(value: string) {
+    if (this._stopBtnStatus !== value) {
+      this._stopBtnStatus = value
+      this.notifyPropertyChange('stopBtnStatus', value)
+    }
+  }
 
   get durMin(): string {
     return this._durMin
@@ -79,8 +116,10 @@ export class HomeViewModel extends Observable {
     }
   }
   onTap() {
-    //TODO:disable button, enable stop butt
-    //var startbtn = document.getElementById("startbtn")
+    this.message = `Status: Preparing task dispatcher`;
+    this.startBtnStatus = 'false';
+    this.stopBtnStatus = 'true';
+
     //convert from string to int 
     this.durMinInt = +this.durMin
     this.durSecInt = +this.durSec
@@ -123,39 +162,43 @@ export class HomeViewModel extends Observable {
                   log(`Available time: ${remainingTime()}`);
                   this._recorder = new TNSRecorder();
                   this._recorder.debug = true; 
-                  const audioFolder = knownFolders.currentApp().getFolder('audio');
-                  let androidFormat = 2;//android.media.MediaRecorder.OutputFormat.MPEG_4;
-                  let androidEncoder = 3;//android.media.MediaRecorder.AudioEncoder.AAC;
+                  // create audio folder? 
+                  const audioFolder = knownFolders.documents().getFolder('audio');
+                  let androidFormat = android.media.MediaRecorder.OutputFormat.MPEG_4;
+                  let androidEncoder = android.media.MediaRecorder.AudioEncoder.AAC;
+                  
                   const recordingPath = `${
-                    audioFolder.path
+                    audioFolder.path 
                   }/recording.${this.platformExtension()}`;
+                  console.log(JSON.stringify(audioFolder));
+
+                  //const recordingPath= "storage/emulated/0/recording"
+                  //Date.now()
 
                   const recorderOptions: AudioRecorderOptions = {
                     filename: recordingPath,
-            
                     format: androidFormat,
-            
                     encoder: androidEncoder,
-            
                     metering: true,
-            
                     infoCallback: infoObject => {
                       console.log(JSON.stringify(infoObject));
                     },
-            
                     errorCallback: errorObject => {
                       console.log(JSON.stringify(errorObject));
                     }
                   };
 
                   log("Recording start!");
+                  this.message = `Status: Recording`
                   this._recorder.start(recorderOptions);
                   const timeoutId = setTimeout(() => {
                       log("Recording stop!");
+                      this.message = `Status: Recording Break`
                       this._recorder.stop();
+
                       
                       resolve();
-                  }, 2000); //change to this.dur
+                  }, 20000); //change to this.dur
                   
                   onCancel(() => {
                       clearTimeout(timeoutId);
@@ -168,14 +211,16 @@ export class HomeViewModel extends Observable {
   }
 
   stop() {
-    //TODO:disable button, enable start button 
     console.info("stopEvent emitted!!")
     taskDispatcher.emitEvent("stopEvent");
+
+    this.message = `Status: Waiting to Start`
+    this.startBtnStatus = 'true';
+    this.stopBtnStatus = 'false';
   }
   
   async emitStartEvent() {
     const isReady = await taskDispatcher.isReady();
-    //COMMENT OUT IF STATEMENT
     if (!isReady) {
       const tasksNotReady = await taskDispatcher.tasksNotReady;
       console.log(`The following tasks are not ready!: ${tasksNotReady}`);

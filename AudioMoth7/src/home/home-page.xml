@@ -28,9 +28,10 @@
         <TextField text="{{ freqMin }}" hint="freqMin" />
         <TextField text="{{ freqSec }}" hint="freqSec" />
         
-        <Button id="startbtn" text="Start" tap="{{ onTap }}" class="-primary" ></Button>
-        <Button id="stopbtn" text="Stop" tap="{{ stop }}" class="-primary" enabled="false" ></Button>
+        <Button id="startbtn" text="Start" tap="{{ onTap }}" class="-primary" isEnabled="{{startBtnStatus}}"></Button>
+        <Button id="stopbtn" text="Stop" tap="{{ stop }}" class="-primary" isEnabled="{{stopBtnStatus}}" ></Button>
         
+        <Label text="{{ message }}" class="h2 text-center" textWrap="true"/>
         
     </StackLayout>
 </Page>
