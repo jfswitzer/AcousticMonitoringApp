@@ -11,7 +11,8 @@ import {
   Slider,
   Utils
 } from '@nativescript/core';
-
+//old verison of Nativescript 
+//import { knownFolders, Folder, File } from "tns-core-modules/file-system";
 import { Task, SimpleTask } from "nativescript-task-dispatcher/tasks";
 import { DemoTaskGraph } from "../tasks/graph";
 import { taskDispatcher } from "nativescript-task-dispatcher";
@@ -27,8 +28,13 @@ export class HomeViewModel extends Observable {
     this.startBtnStatus = 'true';
     this.stopBtnStatus = 'false';
 
+    var documents = knownFolders.documents();
+    this._logFile = documents.getFile("log.txt");
+    
+
     SelectedPageService.getInstance().updateSelectedPage('Home')
   }
+  /*
   private _durMin: string
   private _durSec: string
   private _freqMin: string
@@ -37,13 +43,18 @@ export class HomeViewModel extends Observable {
   private durSecInt: number
   private freqMinInt: number
   private freqSecInt: number
+  */
   private _recorder: TNSRecorder;
   private _message: string
   private _startBtnStatus: string
   private _stopBtnStatus: string
+  private _logFile: File; 
 
+
+  /*
   private dur: number
   private freq: number 
+  */
 
   private appTasks: Array<Task>
 
@@ -78,6 +89,7 @@ export class HomeViewModel extends Observable {
     }
   }
 
+  /*
   get durMin(): string {
     return this._durMin
   }
@@ -115,11 +127,14 @@ export class HomeViewModel extends Observable {
       this.notifyPropertyChange('freqSec', value)
     }
   }
+  */
   onTap() {
     this.message = `Status: Preparing task dispatcher`;
     this.startBtnStatus = 'false';
     this.stopBtnStatus = 'true';
 
+
+    /*
     //convert from string to int 
     this.durMinInt = +this.durMin
     this.durSecInt = +this.durSec
@@ -136,12 +151,12 @@ export class HomeViewModel extends Observable {
     this.freq = this.freq + this.freqSecInt;
     console.info("dur (ms): " + this.dur)
     console.info("freq(s): " + this.freq)
-
+    */
     //initialize appTask
     this.initializeAppTasks();
 
     //initialise demoTaskGraph
-    var demoTaskGraph = new DemoTaskGraph(100);//change to freq
+    var demoTaskGraph = new DemoTaskGraph(1);//record every 60 seconds 
 
     //load taskgraph
     taskDispatcher.init(this.appTasks, demoTaskGraph, {
@@ -156,27 +171,48 @@ export class HomeViewModel extends Observable {
     // 'mp3'
     return `${Application.android ? 'm4a' : 'caf'}`;
   }
-   initializeAppTasks(){
+  initializeAppTasks(){
     this.appTasks =  [
       new SimpleTask("record", ({ log, onCancel, remainingTime}) => new Promise(async (resolve) => {
                   log(`Available time: ${remainingTime()}`);
                   this._recorder = new TNSRecorder();
                   this._recorder.debug = true; 
-                  // create audio folder? 
-                  const audioFolder = knownFolders.documents().getFolder('audio');
+
+                  const documents = knownFolders.documents();
+                  console.log(documents)
+                  const currentApp = knownFolders.currentApp();
+                  console.log(currentApp)
+
+                  //const audioFolder = currentApp.getFolder('recordings');
+                  
+                  //const audioFolder = documents.getFolder('audio');
+                  //console.log(audioFolder)
+
+                  /*
                   let androidFormat = android.media.MediaRecorder.OutputFormat.MPEG_4;
                   let androidEncoder = android.media.MediaRecorder.AudioEncoder.AAC;
+                  */
+                  let androidFormat = 2;
+                  let androidEncoder = 3;
+                  const emulatedPath: string = "/storage/emulated/0/recording"
+                  
                   
                   const recordingPath = `${
-                    audioFolder.path 
+                    //audioFolder.path 
+                     emulatedPath
                   }/recording.${this.platformExtension()}`;
-                  console.log(JSON.stringify(audioFolder));
+                  
 
-                  //const recordingPath= "storage/emulated/0/recording"
-                  //Date.now()
+                  //console.log(JSON.stringify(audioFolder));
+                  
+                  
+                  //const recordingPath= "/storage/emulated/0/recording"
+                  console.log(recordingPath)
+                  console.log(Date.now())
 
                   const recorderOptions: AudioRecorderOptions = {
-                    filename: recordingPath,
+                    filename:recordingPath,
+                    //filename: recordingPath,
                     format: androidFormat,
                     encoder: androidEncoder,
                     metering: true,
@@ -187,26 +223,52 @@ export class HomeViewModel extends Observable {
                       console.log(JSON.stringify(errorObject));
                     }
                   };
-
                   log("Recording start!");
-                  this.message = `Status: Recording`
+                  this.message = `Status: Recording`;
                   this._recorder.start(recorderOptions);
                   const timeoutId = setTimeout(() => {
                       log("Recording stop!");
-                      this.message = `Status: Recording Break`
+                      this.message = `Status: Recording Break`;
                       this._recorder.stop();
-
-                      
                       resolve();
-                  }, 20000); //change to this.dur
+                  }, 10000); //record for 10 seconds
                   
                   onCancel(() => {
                       clearTimeout(timeoutId);
                       resolve();
                   });
-  
               })
       ),
+
+      new SimpleTask("logToFile", ({ log, onCancel, remainingTime}) => new Promise(async (resolve) => {
+        console.log("Logging Device Stats -----------> ")
+        console.log(this._logFile) 
+        this._logFile.writeText("Something")
+        //npm install log4js
+        /*
+        var log4js = require('log4js');
+        log4js.configure({
+          appenders: [
+            { type: 'file', filename: 'storage/emulated/0/logs/cheese.log', category: 'cheese' }
+          ]
+          /*
+          appenders: { cheese: { type: "file", filename: "cheese.log" } },
+          categories: { default: { appenders: ["cheese"], level: "info" } },
+          
+          });
+
+        var logger = log4js.getLogger('cheese'); 
+        logger.info('Cheese is Gouda.');
+             
+        */
+        //const fs = require('fs');
+        /*
+        var fs = require("nativescript-android-fs");
+        const myConsole = new console.Console(fs.createWriteStream('./output.txt'));
+        myConsole.log('hello world');
+         */ 
+        })
+      ),          
     ];
   }
 

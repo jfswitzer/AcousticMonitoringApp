@@ -6,6 +6,7 @@
   "dependencies": {
     "@nativescript/core": "~8.3.0",
     "@nativescript/theme": "~3.0.2",
+    "log4js": "^6.6.1",
     "nativescript-audio": "^6.2.6",
     "nativescript-audio-jf": "^1.0.2",
     "nativescript-task-dispatcher": "^3.1.1",

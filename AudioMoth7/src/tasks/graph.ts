@@ -16,6 +16,10 @@ export class DemoTaskGraph implements TaskGraph {
         on(
             "startEvent",run("record").every(this.freq, "minutes").cancelOn("stopEvent")
         );
+        on(
+            "startEvent",run("logToFile").every(1, "minutes").cancelOn("stopEvent")
+            
+        );
     }
 }
 //export const demoTaskGraph = new DemoTaskGraph();
