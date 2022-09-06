@@ -184,13 +184,11 @@ export class HomeViewModel extends Observable {
 
                   const documents = knownFolders.documents();
                   console.log(documents)
-                  const currentApp = knownFolders.currentApp();
-                  console.log(currentApp)
+                  //const currentApp = knownFolders.currentApp();
+                  //console.log(currentApp)
 
                   var storage = require("nativescript-android-fs");
-
                   //const audioFolder = currentApp.getFolder('recordings');
-                  
                   const audioFolder = documents.getFolder('audio');
                   console.log(audioFolder)
 
@@ -238,7 +236,7 @@ export class HomeViewModel extends Observable {
                       this._recorder.stop();
                       resolve();
                   }, 10000); //record for 10 seconds
-                  storage.save('/storage/emulated/0/audioMothRecordings','AMrecording'+timeStamp+'.mp4');
+                  storage.save("/storage/emulated/0/audioMothRecordings","AMrecording"+timeStamp+".mp4");
 
                   onCancel(() => {
                       clearTimeout(timeoutId);
