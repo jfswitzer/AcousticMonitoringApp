@@ -9,7 +9,8 @@ import {
   knownFolders,
   Page,
   Slider,
-  Utils
+  Utils,
+  CoreTypes,
 } from '@nativescript/core';
 //old verison of Nativescript 
 //import { knownFolders, Folder, File } from "tns-core-modules/file-system";
@@ -21,6 +22,9 @@ import {
   TNSRecorder
 } from 'nativescript-audio';
 
+
+//import * as geolocation from "nativescript-geolocation";
+
 export class HomeViewModel extends Observable {
   constructor() {
     super()
@@ -29,7 +33,7 @@ export class HomeViewModel extends Observable {
     this.stopBtnStatus = 'false';
 
     var documents = knownFolders.documents();
-    this._logFile = documents.getFile("log.txt");
+    this._logFile = documents.getFile("audioMothLog.txt");
     
 
     SelectedPageService.getInstance().updateSelectedPage('Home')
@@ -183,10 +187,12 @@ export class HomeViewModel extends Observable {
                   const currentApp = knownFolders.currentApp();
                   console.log(currentApp)
 
+                  var storage = require("nativescript-android-fs");
+
                   //const audioFolder = currentApp.getFolder('recordings');
                   
-                  //const audioFolder = documents.getFolder('audio');
-                  //console.log(audioFolder)
+                  const audioFolder = documents.getFolder('audio');
+                  console.log(audioFolder)
 
                   /*
                   let androidFormat = android.media.MediaRecorder.OutputFormat.MPEG_4;
@@ -194,24 +200,24 @@ export class HomeViewModel extends Observable {
                   */
                   let androidFormat = 2;
                   let androidEncoder = 3;
-                  const emulatedPath: string = "/storage/emulated/0/recording"
-                  
-                  
+                  //const emulatedPath: string = "/storage/emulated/0/recording"
+                  /*
                   const recordingPath = `${
-                    //audioFolder.path 
-                     emulatedPath
+                    audioFolder.path 
+                     //emulatedPath
                   }/recording.${this.platformExtension()}`;
-                  
+                  */
 
                   //console.log(JSON.stringify(audioFolder));
                   
                   
                   //const recordingPath= "/storage/emulated/0/recording"
-                  console.log(recordingPath)
-                  console.log(Date.now())
+                  //console.log(recordingPath)
+                  
+                  var timeStamp = Date.now();
 
                   const recorderOptions: AudioRecorderOptions = {
-                    filename:recordingPath,
+                    filename: audioFolder.path+'AMrecording'+timeStamp+'.mp4',
                     //filename: recordingPath,
                     format: androidFormat,
                     encoder: androidEncoder,
@@ -232,7 +238,8 @@ export class HomeViewModel extends Observable {
                       this._recorder.stop();
                       resolve();
                   }, 10000); //record for 10 seconds
-                  
+                  storage.save('/storage/emulated/0/audioMothRecordings','AMrecording'+timeStamp+'.mp4');
+
                   onCancel(() => {
                       clearTimeout(timeoutId);
                       resolve();
@@ -244,29 +251,33 @@ export class HomeViewModel extends Observable {
         console.log("Logging Device Stats -----------> ")
         console.log(this._logFile) 
         this._logFile.writeText("Something")
-        //npm install log4js
         /*
-        var log4js = require('log4js');
-        log4js.configure({
-          appenders: [
-            { type: 'file', filename: 'storage/emulated/0/logs/cheese.log', category: 'cheese' }
-          ]
-          /*
-          appenders: { cheese: { type: "file", filename: "cheese.log" } },
-          categories: { default: { appenders: ["cheese"], level: "info" } },
-          
-          });
+        //battery infot 
+        let power = require("nativescript-powerinfo");
+        power.startPowerUpdates(function(Info) {
+        console.log("battery charge: " + Info.percentage + "%");
+        });
 
-        var logger = log4js.getLogger('cheese'); 
-        logger.info('Cheese is Gouda.');
-             
+        //gps location 
+        //npm install geolocation
+        
+        geolocation.enableLocationRequest();
+        console.log("GPS location: " + geolocation.getCurrentLocation({ 
+          desiredAccuracy: CoreTypes.Accuracy.high, maximumAge: 5000, timeout: 20000
+         }))
+        
+
+        //internal temp
+        
+        const activity: App.Activity = Application.android.startActivity || Application.android.foregroundActivity;
+        const mSensorManager = activity.getSystemService(
+          android.content.Context.SENSOR_SERVICE) as android.hardware.SensorManager;
+        const mTempSensor = mSensorManager.getDefaultSensor(
+          android.hardware.Sensor.TYPE_AMBIENT_TEMPERATURE
+        );
+        console.log("Internal Temperature: " + mTempSensor)
         */
-        //const fs = require('fs');
-        /*
-        var fs = require("nativescript-android-fs");
-        const myConsole = new console.Console(fs.createWriteStream('./output.txt'));
-        myConsole.log('hello world');
-         */ 
+
         })
       ),          
     ];
