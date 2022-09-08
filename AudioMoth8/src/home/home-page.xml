@@ -19,15 +19,6 @@
     </ActionBar>
     <StackLayout orientation="vertical">
 
-        <!--
-        <Label text="Duration" class="h2 text-center" textWrap="true"/>
-        <TextField text="{{ durMin }}" hint="durMin" />
-        <TextField text="{{ durSec }}" hint="durSec"  />
-
-        <Label text="Frequency" class="h2 text-center" textWrap="true"/>
-        <TextField text="{{ freqMin }}" hint="freqMin" />
-        <TextField text="{{ freqSec }}" hint="freqSec" />
-        !--> 
         
         <Button id="startbtn" text="Start" tap="{{ onTap }}" class="-primary" isEnabled="{{startBtnStatus}}"></Button>
         <Button id="stopbtn" text="Stop" tap="{{ stop }}" class="-primary" isEnabled="{{stopBtnStatus}}" ></Button>

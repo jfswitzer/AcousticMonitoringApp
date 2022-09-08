@@ -13,7 +13,7 @@ import {
   AudioRecorderOptions,
   TNSRecorder
 } from 'nativescript-audio';
-//import * as geolocation from "nativescript-geolocation";
+import * as geolocation from "nativescript-geolocation";
 
 export class HomeViewModel extends Observable {
   constructor() {
@@ -23,22 +23,14 @@ export class HomeViewModel extends Observable {
     this.stopBtnStatus = 'false';
 
     var documents = knownFolders.documents();
-    this._logFile = documents.getFile("audioMothLog.txt");
+    var timeStamp = Date.now();
+    var fileName = 'audioMothLog'+timeStamp+'.txt'
+    this._logFile = documents.getFile(fileName);
+
 
     SelectedPageService.getInstance().updateSelectedPage('Home')
   }
-  /*
-  private _durMin: string
-  private _durSec: string
-  private _freqMin: string
-  private _freqSec: string
-  private durMinInt: number
-  private durSecInt: number
-  private freqMinInt: number
-  private freqSecInt: number
-  private dur: number
-  private freq: number 
-  */
+
   private _recorder: TNSRecorder;
   private _message: string
   private _startBtnStatus: string
@@ -76,68 +68,14 @@ export class HomeViewModel extends Observable {
       this.notifyPropertyChange('stopBtnStatus', value)
     }
   }
-  /*
-  get durMin(): string {
-    return this._durMin
-  }
-  get durSec(): string {
-    return this._durSec
-  }
-  get freqMin(): string {
-    return this._freqMin
-  }
-  get freqSec(): string {
-    return this._freqSec
-  }
+  
 
-  set durMin(value: string) {
-    if (this._durMin !== value) {
-      this._durMin = value
-      this.notifyPropertyChange('durMin', value)
-    }
-  }
-  set durSec(value: string) {
-    if (this._durSec !== value) {
-      this._durSec = value
-      this.notifyPropertyChange('durSec', value)
-    }
-  }
-  set freqMin(value: string) {
-    if (this._freqMin !== value) {
-      this._freqMin = value
-      this.notifyPropertyChange('freqMin', value)
-    }
-  }
-  set freqSec(value: string) {
-    if (this._freqSec !== value) {
-      this._freqSec = value
-      this.notifyPropertyChange('freqSec', value)
-    }
-  }
-  */
 
   onTap() {
     this.message = `Status: Preparing task dispatcher`;
     this.startBtnStatus = 'false';
     this.stopBtnStatus = 'true';
-    /*
-    //convert from string to int 
-    this.durMinInt = +this.durMin
-    this.durSecInt = +this.durSec
-    this.freqMinInt = +this.freqMin
-    this.freqSecInt = +this.freqSec
-    console.info("durMinInt: " + this.durMinInt)
-    console.info("durSecInt: " + this.durSecInt)
-    console.info("freqMinInt: " + this.freqMinInt)
-    console.info("freqSecInt: " + this.freqSecInt)
-    //convert dur to milliseconds, freq to seconds
-    this.dur = this.durMinInt*60*1000;
-    this.dur = this.dur + this.durSecInt*1000;
-    this.freq = this.freqMinInt*60;
-    this.freq = this.freq + this.freqSecInt;
-    console.info("dur (ms): " + this.dur)
-    console.info("freq(s): " + this.freq)
-    */
+
     //initialize appTask
     this.initializeAppTasks();
 
@@ -148,6 +86,15 @@ export class HomeViewModel extends Observable {
     taskDispatcher.init(this.appTasks, demoTaskGraph, {
       enableLogging: true,
     });
+/*
+    //gps location 
+        //npm install geolocation
+        
+        geolocation.enableLocationRequest();
+        console.log("GPS location: " + geolocation.getCurrentLocation({ 
+          desiredAccuracy: CoreTypes.Accuracy.high, maximumAge: 5000, timeout: 20000
+         }))
+         */
     //trigger the task dispatcher
     console.info("startEvent emitted!!")
     taskDispatcher.emitEvent("startEvent");
@@ -167,7 +114,7 @@ export class HomeViewModel extends Observable {
                   this._recorder.debug = true; 
 
                   const documents = knownFolders.documents();
-                  console.log(documents)
+                  //console.log(documents)
                   //const currentApp = knownFolders.currentApp();
                   //console.log(currentApp)
 
@@ -184,16 +131,28 @@ export class HomeViewModel extends Observable {
                   let androidFormat = 2;
                   let androidEncoder = 3;
                   
-                  /*
-                  const recordingPath = `${
-                    audioFolder.path 
-                  }/recording.${this.platformExtension()}`;
-                  */
+                  
                   
                   var timeStamp = Date.now();
                   var fileName = 'AMrecording'+timeStamp+'.mp4'
                   console.log("NAME OF FILE: "+ fileName)
+                  /*
+                  //ask for permissions 
+                  const permissions = require('nativescript-permissions')
+                  permissions.requestPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                  .then(() => {
+                  console.log('Required Android permissions have been granted');
+                  })
+                  .catch(() => {
+                  console.error('Required Android permissions have been denied!');
+                  });
+                  */
+                  
+
                   const filePath = path.join(documents.path, fileName);
+                  console.log(filePath);
+
+                  console.log(Application.android.context.getFilesDir())
 
                   const recorderOptions: AudioRecorderOptions = {
                     filename: filePath,
@@ -221,8 +180,9 @@ export class HomeViewModel extends Observable {
                       const exists = File.exists(filePath); 
                       console.log("FILE EXISTS IN INTERNAL: " + exists)
                       //check if exists in external storage
-                      storage.save("/Download",fileName);
-                      console.log("FILE EXISTS IN EXTERNAL: "+storage.check("/Download",fileName))
+                      //storage.save("/Downloads",fileName)
+                      console.log("FILE EXISTS IN EXTERNAL: "+storage.check("/Downloads",fileName))
+
                       resolve();
                   }, 10000); //record for 10 seconds, don't think so: check again
 
@@ -234,34 +194,32 @@ export class HomeViewModel extends Observable {
       ),
 
       new SimpleTask("logToFile", ({ log, onCancel, remainingTime}) => new Promise(async (resolve) => {
-        console.log("Logging Device Stats -----------> ")
-        console.log(this._logFile) 
-        var documents = knownFolders.documents()
-        var fileName = "audioMothLog.txt"
-        const filePath = path.join(documents.path, fileName);
-        //check if exists in internal storage 
-        const exists = File.exists(filePath); 
-        console.log("FILE EXISTS IN INTERNAL: " + exists)
-        //check if exists in external storage
-        var storage = require("nativescript-android-fs");
-        //storage.save('/storage/emulated/0',fileName);
-        //console.log("FILE EXISTS IN EXTERNAL: "+storage.check('/storage/emulated/0',fileName))
+        console.log("Logging Device Stats -----------> ");
+        console.log(this._logFile);
+        //not working 
+        (this._logFile).writeText("This is a test");
+        
         
         /*
         //battery info
-        let power = require("nativescript-powerinfo");
+        var power = require("nativescript-powerinfo");
         power.startPowerUpdates(function(Info) {
         console.log("battery charge: " + Info.percentage + "%");
         });
+        */
+  
 
         //gps location 
         //npm install geolocation
         
         geolocation.enableLocationRequest();
+        
+        
         console.log("GPS location: " + geolocation.getCurrentLocation({ 
           desiredAccuracy: CoreTypes.Accuracy.high, maximumAge: 5000, timeout: 20000
          }))
          
+         /*
         //internal temp
         
         const activity: App.Activity = Application.android.startActivity || Application.android.foregroundActivity;

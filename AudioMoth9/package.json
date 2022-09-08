@@ -1,0 +1,23 @@
+{
+  "name": "AudioMoth9",
+  "main": "src/main.ts",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@nativescript/core": "~8.3.0",
+    "@nativescript/geolocation": "^8.0.2",
+    "@nativescript/theme": "~3.0.2",
+    "nativescript-android-fs": "^1.2.0",
+    "nativescript-audio": "^6.2.6",
+    "nativescript-powerinfo": "^1.0.7",
+    "nativescript-task-dispatcher": "^3.1.1",
+    "nativescript-ui-sidedrawer": "~10.0.2",
+    "rxjs": "~7.5.0"
+  },
+  "devDependencies": {
+    "@nativescript/android": "8.2.4",
+    "@nativescript/types": "~8.3.0",
+    "@nativescript/webpack": "~5.0.6",
+    "typescript": "~4.5.5"
+  }
+}
