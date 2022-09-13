@@ -24,6 +24,7 @@
         <Button id="stopbtn" text="Stop" tap="{{ stop }}" class="-primary" isEnabled="{{stopBtnStatus}}" ></Button>
         
         <Label text="{{ message }}" class="h2 text-center" textWrap="true"/>
+        <Label text="{{ numRecordings }}" class="h2 text-center" textWrap="true"/>
         
     </StackLayout>
 </Page>

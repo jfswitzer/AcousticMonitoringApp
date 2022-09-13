@@ -13,8 +13,13 @@ import {
   AudioRecorderOptions,
   TNSRecorder
 } from 'nativescript-audio';
+
 import * as geolocation from '@nativescript/geolocation';
 CoreTypes.Accuracy; // used to describe at what accuracy the location should be get
+import { DeviceInfo } from "nativescript-dna-deviceinfo";
+
+import { readFileSync, writeFileSync, promises as fsPromises } from 'fs';
+//import { AndroidSensors, AndroidSensorListener, SensorDelay } from 'nativescript-android-sensors';
 
 export class HomeViewModel extends Observable {
   constructor() {
@@ -22,22 +27,24 @@ export class HomeViewModel extends Observable {
     this.message = `Status: Waiting to Start`;
     this.startBtnStatus = 'true';
     this.stopBtnStatus = 'false';
-
+    this.numRecordings = "";
     //var documents = knownFolders.documents();
-    //var timeStamp = Date.now();
-    //var fileName = 'audioMothLog'+timeStamp+'.txt'
-    //this._logFile = documents.getFile(fileName);
+    var timeStamp = Date.now();
+    this.logFile = 'audioMothLog'+timeStamp+'.txt'
 
-
+    
     SelectedPageService.getInstance().updateSelectedPage('Home')
   }
 
   private _recorder: TNSRecorder;
   private _message: string
+  private _numRecordings: string
   private _startBtnStatus: string
   private _stopBtnStatus: string
-  private _logFile: File; 
   private appTasks: Array<Task>
+  private counter: number
+  private logFile: string
+  
 
   get message(): string {
     return this._message
@@ -47,6 +54,16 @@ export class HomeViewModel extends Observable {
     if (this._message !== value) {
       this._message = value
       this.notifyPropertyChange('message', value)
+    }
+  }
+  get numRecordings(): string {
+    return this._numRecordings
+  }
+
+  set numRecordings(value: string) {
+    if (this._numRecordings !== value) {
+      this._numRecordings = value
+      this.notifyPropertyChange('numRecordings', value)
     }
   }
   get startBtnStatus(): string {
@@ -76,6 +93,7 @@ export class HomeViewModel extends Observable {
     this.message = `Status: Preparing task dispatcher`;
     this.startBtnStatus = 'false';
     this.stopBtnStatus = 'true';
+    this.counter = 0;
     geolocation.enableLocationRequest();
         
     //initialize appTask
@@ -112,19 +130,12 @@ export class HomeViewModel extends Observable {
     this.appTasks =  [
       new SimpleTask("record", ({ log, onCancel, remainingTime}) => new Promise(async (resolve) => {
                   log(`Available time: ${remainingTime()}`);
+                  this.counter++;
                   this._recorder = new TNSRecorder();
                   this._recorder.debug = true; 
 
                   const documents = knownFolders.documents();
-                  //console.log(documents)
-                  //const currentApp = knownFolders.currentApp();
-                  //console.log(currentApp)
-
                   var storage = require("nativescript-android-fs");
-
-                  //const audioFolder = currentApp.getFolder('recordings');
-                  //const audioFolder = documents.getFolder('audio');
-                  //console.log(audioFolder)
 
                   /*
                   let androidFormat = android.media.MediaRecorder.OutputFormat.MPEG_4;
@@ -132,25 +143,9 @@ export class HomeViewModel extends Observable {
                   */
                   let androidFormat = 2;
                   let androidEncoder = 3;
-                  
-                  
-                  
                   var timeStamp = Date.now();
                   var fileName = 'AMrecording'+timeStamp+'.mp4'
                   console.log("NAME OF FILE: "+ fileName)
-                  /*
-                  //ask for permissions 
-                  const permissions = require('nativescript-permissions')
-                  permissions.requestPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                  .then(() => {
-                  console.log('Required Android permissions have been granted');
-                  })
-                  .catch(() => {
-                  console.error('Required Android permissions have been denied!');
-                  });
-                  */
-                  
-
                   const filePath = path.join(documents.path, fileName);
                   console.log(filePath);
 
@@ -184,7 +179,7 @@ export class HomeViewModel extends Observable {
                       //check if exists in external storage
                       //storage.save("/Downloads",fileName)
                       console.log("FILE EXISTS IN EXTERNAL: "+storage.check("/Downloads",fileName))
-
+                      this.numRecordings = "# of Recordings:  " + this.counter.toString(); 
                       resolve();
                   }, 10000); //record for 10 seconds, don't think so: check again
 
@@ -195,41 +190,66 @@ export class HomeViewModel extends Observable {
               })
       ),
 
-      new SimpleTask("logToFile", ({ log, onCancel, remainingTime}) => new Promise(async (resolve) => {
+      new SimpleTask("logToFile", ({ log, onCancel, remainingTime}) => new Promise( (resolve) => {
         console.log("Logging Device Stats -----------> ");
         //console.log(this._logFile);
-        console.log("TIMESTAMP: " + Date.now());
-        
-        
-        
-        //battery info
-        var level: number = +android.os.BatteryManager.EXTRA_LEVEL
-        var scale: number = +android.os.BatteryManager.EXTRA_SCALE
-        console.log("LEVEL:" + level)
-        console.log("SCALE: " + scale )
-        
-        var batteryPct = (level*100)/scale;
-        console.log("BATTERY PERCENTAGE: " + batteryPct)
-  
+       console.log("TIMESTAMP: " + Date.now());
 
+       const documents = knownFolders.documents();
+       writeFileSync(path.join(documents.path, this.logFile), "testing log", {
+        flag: 'a+',
+      });
+
+        //battery info
+        console.log("BATTERY PERCENTAGE: "+ DeviceInfo.batteryLevel() +"%");
+  
         //gps location 
         //npm install geolocation
+       
+        var p = geolocation.getCurrentLocation({ 
+          desiredAccuracy: CoreTypes.Accuracy.high, maximumAge: 5000, timeout: 20000
+         })
+
+         p.then((value) => {
+          var str = JSON.stringify(value)
+          console.log('LOCATION:'+str);
+        }).catch((err) => {
+          console.log('LOCATION:'+err); // 👉️ "An error occurred"
+        });
+
+         /*
         console.log("GPS location: " + geolocation.getCurrentLocation({ 
           desiredAccuracy: CoreTypes.Accuracy.high, maximumAge: 5000, timeout: 20000
          }))
-         
-         /*
+        */
+        
          
         //internal temp
         
-        const activity: App.Activity = Application.android.startActivity || Application.android.foregroundActivity;
+        /*
+        var intent: android.content.Intent = Application.android.content.Context.registerReceiver(
+        null, new android.content.IntentFilter(android.content.Intent.ACTION_BATTERY_CHANGED));
+    
+        var temp: number   = (intent.getIntExtra(android.os.BatteryManager.EXTRA_TEMPERATURE,0)) / 10;
+        console.log(temp.toString() + "*C");
+          IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+          Intent batteryStatus = context.registerReceiver(null, ifilter);
+         */
+        
+        const activity: android.app.Activity= Application.android.startActivity
         const mSensorManager = activity.getSystemService(
           android.content.Context.SENSOR_SERVICE) as android.hardware.SensorManager;
         const mTempSensor = mSensorManager.getDefaultSensor(
-          android.hardware.Sensor.TYPE_AMBIENT_TEMPERATURE
+            android.hardware.Sensor.TYPE_AMBIENT_TEMPERATURE 
         );
+        
         console.log("Internal Temperature: " + mTempSensor)
-        */
+
+        resolve();
+        onCancel(() => {
+          resolve();
+        });
+        
 
         })
       ),          
@@ -243,7 +263,10 @@ export class HomeViewModel extends Observable {
     this.message = `Status: Waiting to Start`
     this.startBtnStatus = 'true';
     this.stopBtnStatus = 'false';
+    this.counter = 0;
+    this.numRecordings = "";
   }
+  
   
   
 
