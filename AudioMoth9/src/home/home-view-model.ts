@@ -92,7 +92,7 @@ export class HomeViewModel extends Observable {
 
 
   onTap() {
-    this.message = `Status: Preparing task dispatcher`;
+    this.message = `Wait to accept Audio Permissions before leaving unattended`;
     this.startBtnStatus = 'false';
     this.stopBtnStatus = 'true';
     this.counter = 0;
