@@ -28,9 +28,10 @@ export class HomeViewModel extends Observable {
     this.startBtnStatus = 'true';
     this.stopBtnStatus = 'false';
     this.numRecordings = "";
+    this.geolocation = "";
     //var documents = knownFolders.documents();
     var timeStamp = Date.now();
-    this.logFile = 'audioMothLog'+timeStamp+'.txt'
+    this.logFile = 'AM_log'+timeStamp+'.txt'
 
     
     SelectedPageService.getInstance().updateSelectedPage('Home')
@@ -44,7 +45,8 @@ export class HomeViewModel extends Observable {
   private appTasks: Array<Task>
   private counter: number
   private logFile: string
-  
+  private geolocation: string
+  private getGeo: boolean
 
   get message(): string {
     return this._message
@@ -107,37 +109,15 @@ export class HomeViewModel extends Observable {
       enableLogging: true,
     });
 
-    //gps location 
-    //gps location 
-    var p = geolocation.getCurrentLocation({ 
-      desiredAccuracy: CoreTypes.Accuracy.high, maximumAge: 5000, timeout: 20000
-     })
+    //gps location, set delay so that user can accpet permissions
+    const timeoutId = setTimeout(() => {
+      this.getLocation();
+      }, 20000);  
+    
 
-     var geoloc;
-     p.then((value) => {
-      geoloc = JSON.stringify(value)
-      console.log('LOCATION:'+geoloc);
-    }).catch((err) => {
-      console.log('LOCATION:'+err); // 👉️ "An error occurred"
-    });
-         
-    const documents = knownFolders.documents();
-    const file: File = <File>documents.getFile(this.logFile);
-
-    var data =  "Geolocation: " + p + "\n"
-    file.writeTextSync(data,  function(err) {
-    if (err) {
-      return console.error(err);
-      }
-    });
     //trigger the task dispatcher
     console.info("startEvent emitted!!")
     taskDispatcher.emitEvent("startEvent");
-  }
-
-  private platformExtension() {
-    // 'mp3'
-    return `${Application.android ? 'm4a' : 'caf'}`;
   }
 
   initializeAppTasks(){
@@ -147,7 +127,6 @@ export class HomeViewModel extends Observable {
                   this.counter++;
                   this._recorder = new TNSRecorder();
                   this._recorder.debug = true; 
-
                   const documents = knownFolders.documents();
                   var storage = require("nativescript-android-fs");
 
@@ -158,12 +137,11 @@ export class HomeViewModel extends Observable {
                   let androidFormat = 2;
                   let androidEncoder = 3;
                   var timeStamp = Date.now();
-                  var fileName = 'AMrecording'+timeStamp+'.mp4'
-                  console.log("NAME OF FILE: "+ fileName)
+                  var fileName = 'AMrec_'+timeStamp+'.mp4'
+                  console.log("Name of File: "+ fileName)
                   const filePath = path.join(documents.path, fileName);
-                  console.log(filePath);
-
-                  console.log(Application.android.context.getFilesDir())
+                  console.log("Path to File:" + filePath);
+                  console.log("Path to Files Folder: " + Application.android.context.getFilesDir())
 
                   const recorderOptions: AudioRecorderOptions = {
                     filename: filePath,
@@ -188,9 +166,8 @@ export class HomeViewModel extends Observable {
 
                       //save recording
                       const exists = File.exists(filePath); 
-                      console.log("FILE EXISTS IN INTERNAL: " + exists)
-                      storage.save("/Downloads",fileName)
-                      console.log("FILE EXISTS IN EXTERNAL: "+storage.check("/Downloads",fileName))
+                      console.log("File exists in Internal: " + exists)
+                      console.log("File exists in External: " + storage.check("/Downloads",fileName))
                       if (exists){
                       this.numRecordings = "# of Recordings:  " + this.counter.toString(); 
                       }
@@ -206,7 +183,6 @@ export class HomeViewModel extends Observable {
 
       new SimpleTask("logToFile", ({ log, onCancel, remainingTime}) => new Promise( (resolve) => {
         console.log("Logging Device Stats -----------> ");
-        //console.log(this._logFile);
         var time = Date.now()
         console.log("Timestamp: " + time);
 
@@ -222,7 +198,7 @@ export class HomeViewModel extends Observable {
         const mTempSensor = mSensorManager.getDefaultSensor(
             //android.hardware.Sensor.TYPE_TEMPERATURE (7)
             // ambient --> 13
-            13
+            7
         );
         
         console.log("Internal Temperature: " + mTempSensor)
@@ -233,13 +209,6 @@ export class HomeViewModel extends Observable {
         );
         console.log("Ambient Light: " + mLightSensor)
 
-        //pressure   
-        const mPressureSensor = mSensorManager.getDefaultSensor(
-          //android.hardware.Sensor.TYPE_PRESSURE
-          6
-        );
-        console.log("Pressure: " + mPressureSensor)
-
         const documents = knownFolders.documents();
         const file: File = <File>documents.getFile(this.logFile);
         var contents = file.readTextSync(function(err) {
@@ -247,13 +216,12 @@ export class HomeViewModel extends Observable {
               return console.error(err);
           }
         });
-        console.log("CONTENTS:" + contents)
-
-        var data = contents + "Timestamp: " + time + "\n"
+        var data = contents + "\n" + "Timestamp: " + time + "\n"
         data += "Battery Level: "+ DeviceInfo.batteryLevel() +"%\n"
+        data += "Internal Temperature: " + mTempSensor + "\n"
         data += "Ambient Light: " + mLightSensor + "\n"
-        
-        console.log("DATA: " + data)
+        console.log("DATA:  \n" + data)
+
         file.writeTextSync(data,  function(err) {
           if (err) {
               return console.error(err);
@@ -274,6 +242,30 @@ export class HomeViewModel extends Observable {
     taskDispatcher.emitEvent("stopEvent");
     this.message = `Refresh App to Start Again`
     this.stopBtnStatus = 'false';
+  }
+
+  getLocation(){
+    const documents = knownFolders.documents();
+    const file: File = <File>documents.getFile(this.logFile);
+    
+    //geolocation (get location once)
+        
+    var p = geolocation.getCurrentLocation({ 
+      desiredAccuracy: CoreTypes.Accuracy.high, maximumAge: 5000, timeout: 20000
+    })
+    p.then((value) => {
+          var str = JSON.stringify(value)
+          //console.log('Geolocation:'+str);
+          var data = "Geolocaition: " + str + "\n";
+          file.writeTextSync(data,  function(err) {
+          if (err) {
+            return console.error(err);
+          }
+          });
+    }).catch((err) => {
+          console.log('Geolocation:'+err); // 👉️ "An error occurred"
+    });
+    
   }
   
   
