@@ -13,14 +13,14 @@ export class DemoTaskGraph implements TaskGraph {
         on: EventListenerGenerator,
         run: RunnableTaskDescriptor
     ): Promise<void> {
-        
+        /*
         on(
             "startEvent",run("record").every(this.freq, "minutes").cancelOn("stopEvent")
         );
-        
+        */
         
         on(
-            "startLogging",run("logToFile").every(1, "minutes").cancelOn("stopEvent")
+            "startEvent",run("logToFile").every(1, "minutes").cancelOn("stopEvent")
             
         );
         

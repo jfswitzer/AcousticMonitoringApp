@@ -4,7 +4,7 @@ import { Observable } from '@nativescript/core'
 import { SelectedPageService } from '../shared/selected-page-service'
 import {
   Application,Dialogs,File,isAndroid,knownFolders,
-  Page,Slider,Utils,CoreTypes,path
+  Page,Slider,Utils,CoreTypes,path,
 } from '@nativescript/core';
 import { Task, SimpleTask } from "nativescript-task-dispatcher/tasks";
 import { DemoTaskGraph } from "../tasks/graph";
@@ -18,8 +18,8 @@ import * as geolocation from '@nativescript/geolocation';
 CoreTypes.Accuracy; // used to describe at what accuracy the location should be get
 import { DeviceInfo } from "nativescript-dna-deviceinfo";
 
-import { readFileSync, writeFileSync, promises as fsPromises } from 'fs';
-//import { AndroidSensors, AndroidSensorListener, SensorDelay } from 'nativescript-android-sensors';
+import { AndroidSensors, AndroidSensorListener, SensorDelay } from 'nativescript-android-sensors';
+import { android } from '@nativescript/core/application';
 
 export class HomeViewModel extends Observable {
   constructor() {
@@ -106,19 +106,33 @@ export class HomeViewModel extends Observable {
     taskDispatcher.init(this.appTasks, demoTaskGraph, {
       enableLogging: true,
     });
-/*
+
     //gps location 
-        //npm install geolocation
-        
-        geolocation.enableLocationRequest();
-        console.log("GPS location: " + geolocation.getCurrentLocation({ 
-          desiredAccuracy: CoreTypes.Accuracy.high, maximumAge: 5000, timeout: 20000
-         }))
-         */
+    //gps location 
+    var p = geolocation.getCurrentLocation({ 
+      desiredAccuracy: CoreTypes.Accuracy.high, maximumAge: 5000, timeout: 20000
+     })
+
+     var geoloc;
+     p.then((value) => {
+      geoloc = JSON.stringify(value)
+      console.log('LOCATION:'+geoloc);
+    }).catch((err) => {
+      console.log('LOCATION:'+err); // 👉️ "An error occurred"
+    });
+         
+    const documents = knownFolders.documents();
+    const file: File = <File>documents.getFile(this.logFile);
+
+    var data =  "Geolocation: " + p + "\n"
+    file.writeTextSync(data,  function(err) {
+    if (err) {
+      return console.error(err);
+      }
+    });
     //trigger the task dispatcher
     console.info("startEvent emitted!!")
     taskDispatcher.emitEvent("startEvent");
-    taskDispatcher.emitEvent("startLogging");
   }
 
   private platformExtension() {
@@ -173,13 +187,13 @@ export class HomeViewModel extends Observable {
                       this._recorder.stop();
 
                       //save recording
-                      //check if exists in internal storage 
                       const exists = File.exists(filePath); 
                       console.log("FILE EXISTS IN INTERNAL: " + exists)
-                      //check if exists in external storage
-                      //storage.save("/Downloads",fileName)
+                      storage.save("/Downloads",fileName)
                       console.log("FILE EXISTS IN EXTERNAL: "+storage.check("/Downloads",fileName))
+                      if (exists){
                       this.numRecordings = "# of Recordings:  " + this.counter.toString(); 
+                      }
                       resolve();
                   }, 10000); //record for 10 seconds, don't think so: check again
 
@@ -193,64 +207,63 @@ export class HomeViewModel extends Observable {
       new SimpleTask("logToFile", ({ log, onCancel, remainingTime}) => new Promise( (resolve) => {
         console.log("Logging Device Stats -----------> ");
         //console.log(this._logFile);
-       console.log("TIMESTAMP: " + Date.now());
+        var time = Date.now()
+        console.log("Timestamp: " + time);
 
-       const documents = knownFolders.documents();
-       writeFileSync(path.join(documents.path, this.logFile), "testing log", {
-        flag: 'a+',
-      });
+        //battery level
+        console.log("Battery Level: "+ DeviceInfo.batteryLevel() +"%");
 
-        //battery info
-        console.log("BATTERY PERCENTAGE: "+ DeviceInfo.batteryLevel() +"%");
-  
-        //gps location 
-        //npm install geolocation
-       
-        var p = geolocation.getCurrentLocation({ 
-          desiredAccuracy: CoreTypes.Accuracy.high, maximumAge: 5000, timeout: 20000
-         })
-
-         p.then((value) => {
-          var str = JSON.stringify(value)
-          console.log('LOCATION:'+str);
-        }).catch((err) => {
-          console.log('LOCATION:'+err); // 👉️ "An error occurred"
-        });
-
-         /*
-        console.log("GPS location: " + geolocation.getCurrentLocation({ 
-          desiredAccuracy: CoreTypes.Accuracy.high, maximumAge: 5000, timeout: 20000
-         }))
-        */
-        
-         
-        //internal temp
-        
-        /*
-        var intent: android.content.Intent = Application.android.content.Context.registerReceiver(
-        null, new android.content.IntentFilter(android.content.Intent.ACTION_BATTERY_CHANGED));
-    
-        var temp: number   = (intent.getIntExtra(android.os.BatteryManager.EXTRA_TEMPERATURE,0)) / 10;
-        console.log(temp.toString() + "*C");
-          IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-          Intent batteryStatus = context.registerReceiver(null, ifilter);
-         */
-        
         const activity: android.app.Activity= Application.android.startActivity
         const mSensorManager = activity.getSystemService(
-          android.content.Context.SENSOR_SERVICE) as android.hardware.SensorManager;
+          //android.content.Context.SENSOR_SERVICE) as android.hardware.SensorManager;
+          "sensor") as android.hardware.SensorManager;
+
+        //internal temperature sensor
         const mTempSensor = mSensorManager.getDefaultSensor(
-            android.hardware.Sensor.TYPE_AMBIENT_TEMPERATURE 
+            //android.hardware.Sensor.TYPE_TEMPERATURE (7)
+            // ambient --> 13
+            13
         );
         
         console.log("Internal Temperature: " + mTempSensor)
+        //light  sensor
+        const mLightSensor = mSensorManager.getDefaultSensor(
+            //android.hardware.Sensor.TYPE_LIGHT
+            5
+        );
+        console.log("Ambient Light: " + mLightSensor)
+
+        //pressure   
+        const mPressureSensor = mSensorManager.getDefaultSensor(
+          //android.hardware.Sensor.TYPE_PRESSURE
+          6
+        );
+        console.log("Pressure: " + mPressureSensor)
+
+        const documents = knownFolders.documents();
+        const file: File = <File>documents.getFile(this.logFile);
+        var contents = file.readTextSync(function(err) {
+          if (err) {
+              return console.error(err);
+          }
+        });
+        console.log("CONTENTS:" + contents)
+
+        var data = contents + "Timestamp: " + time + "\n"
+        data += "Battery Level: "+ DeviceInfo.batteryLevel() +"%\n"
+        data += "Ambient Light: " + mLightSensor + "\n"
+        
+        console.log("DATA: " + data)
+        file.writeTextSync(data,  function(err) {
+          if (err) {
+              return console.error(err);
+          }
+        });
 
         resolve();
         onCancel(() => {
           resolve();
         });
-        
-
         })
       ),          
     ];
@@ -259,12 +272,8 @@ export class HomeViewModel extends Observable {
   stop() {
     console.info("stopEvent emitted!!")
     taskDispatcher.emitEvent("stopEvent");
-
-    this.message = `Status: Waiting to Start`
-    this.startBtnStatus = 'true';
+    this.message = `Refresh App to Start Again`
     this.stopBtnStatus = 'false';
-    this.counter = 0;
-    this.numRecordings = "";
   }
   
   
