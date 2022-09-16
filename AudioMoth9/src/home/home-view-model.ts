@@ -256,7 +256,7 @@ export class HomeViewModel extends Observable {
     p.then((value) => {
           var str = JSON.stringify(value)
           //console.log('Geolocation:'+str);
-          var data = "Geolocaition: " + str + "\n";
+          var data = "Geolocation: " + str + "\n";
           file.writeTextSync(data,  function(err) {
           if (err) {
             return console.error(err);
