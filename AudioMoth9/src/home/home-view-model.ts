@@ -31,7 +31,7 @@ export class HomeViewModel extends Observable {
     this.geolocation = "";
     //var documents = knownFolders.documents();
     var timeStamp = Date.now();
-    this.logFile = 'AM_log'+timeStamp+'.txt'
+    this.logFile = 'AM_log.txt'
 
     
     SelectedPageService.getInstance().updateSelectedPage('Home')
@@ -198,7 +198,7 @@ export class HomeViewModel extends Observable {
         const mTempSensor = mSensorManager.getDefaultSensor(
             //android.hardware.Sensor.TYPE_TEMPERATURE (7)
             // ambient --> 13
-            7
+            13
         );
         
         console.log("Internal Temperature: " + mTempSensor)
