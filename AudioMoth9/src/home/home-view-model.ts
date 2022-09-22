@@ -109,7 +109,7 @@ export class HomeViewModel extends Observable {
       enableLogging: true,
     });
 
-    //gps location, set delay so that user can accpet permissions
+    //gps location, set delay so that user can accept permissions
     const timeoutId = setTimeout(() => {
       this.getLocation();
       }, 20000);  
