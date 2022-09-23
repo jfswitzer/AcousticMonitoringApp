@@ -29,7 +29,6 @@ export class HomeViewModel extends Observable {
     this.stopBtnStatus = 'false';
     this.numRecordings = "";
     this.geolocation = "";
-    //var documents = knownFolders.documents();
     var timeStamp = Date.now();
     this.logFile = 'AM_log.txt'
 
@@ -172,7 +171,7 @@ export class HomeViewModel extends Observable {
                       this.numRecordings = "# of Recordings:  " + this.counter.toString(); 
                       }
                       resolve();
-                  }, 10000); //record for 10 seconds, don't think so: check again
+                  }, 10000); //record for 10 seconds
 
                   onCancel(() => {
                       clearTimeout(timeoutId);
