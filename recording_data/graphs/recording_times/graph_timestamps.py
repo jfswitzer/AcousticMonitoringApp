@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib.pyplot import figure
 from matplotlib.ticker import FuncFormatter
 from datetime import datetime
 import numpy as np
@@ -24,6 +25,7 @@ with open('moto1_file_list_machineTime.csv','r') as csvfile1:
             motodata1 = []
             motodata = []
             samsungdata1 = []
+            
             for row in moto1: 
                 motodata1.append(row[0])
             for row in moto: 
@@ -44,8 +46,12 @@ with open('moto1_file_list_machineTime.csv','r') as csvfile1:
             labels1 = ['moto1', 'moto', 'samsung1']
             plt.eventplot(datas, colors=colors1,
                 linelengths=1)
-            formatter = FuncFormatter(millions) 
+            
+            formatter = FuncFormatter(millions)
             ax = plt.gca()
             ax.xaxis.set_major_formatter(formatter)
+            
+            plt.gcf().set_size_inches(10, 4)
             plt.legend(labels1)
             plt.show()
+
