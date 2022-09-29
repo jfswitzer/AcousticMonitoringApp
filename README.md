@@ -16,5 +16,11 @@
     ns clean
     ns run android
    ```
+## Access files (only works on some devices)
+```
+cd platform-tools 
+adb shell
+run-as org.nativescript.AudioMoth9 ls /data/user/0/org.nativescript.AudioMoth9/files 
+```
    
 
