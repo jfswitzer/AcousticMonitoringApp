@@ -111,7 +111,7 @@ export class HomeViewModel extends Observable {
     //gps location, set delay so that user can accept permissions
     const timeoutId = setTimeout(() => {
       this.getLocation();
-      }, 20000);  
+      }, 10000);  
     
 
     //trigger the task dispatcher
@@ -123,7 +123,6 @@ export class HomeViewModel extends Observable {
     this.appTasks =  [
       new SimpleTask("record", ({ log, onCancel, remainingTime}) => new Promise(async (resolve) => {
                   log(`Available time: ${remainingTime()}`);
-                  this.counter++;
                   this._recorder = new TNSRecorder();
                   this._recorder.debug = true; 
                   const documents = knownFolders.documents();
@@ -168,7 +167,8 @@ export class HomeViewModel extends Observable {
                       console.log("File exists in Internal: " + exists)
                       console.log("File exists in External: " + storage.check("/Downloads",fileName))
                       if (exists){
-                      this.numRecordings = "# of Recordings:  " + this.counter.toString(); 
+                        this.counter++;
+                        this.numRecordings = "# of Recordings:  " + this.counter.toString(); 
                       }
                       resolve();
                   }, 10000); //record for 10 seconds
