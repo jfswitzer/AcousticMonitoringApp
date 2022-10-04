@@ -96,6 +96,7 @@ export class HomeViewModel extends Observable {
     this.stopBtnStatus = 'true';
     this.counter = 0;
     geolocation.enableLocationRequest();
+    
         
     //initialize appTask
     this.initializeAppTasks();
@@ -266,6 +267,7 @@ export class HomeViewModel extends Observable {
     });
     
   }
+
   
   
   

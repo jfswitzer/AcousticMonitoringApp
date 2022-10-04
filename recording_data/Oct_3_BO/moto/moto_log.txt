@@ -1,0 +1,53 @@
+Geolocation: {"android":{},"latitude":32.8815019,"longitude":-117.2338918,"altitude":79.0999984741211,"horizontalAccuracy":15.11400032043457,"verticalAccuracy":15.11400032043457,"speed":0,"direction":0,"timestamp":"2022-10-03T22:16:53.068Z"}
+Timestamp: 1664835461721
+Battery Level: 25%
+Internal Temperature: null
+Ambient Light: {Sensor name="Ambient Light sensor", vendor="Elan", version=1, type=5, maxRange=27000.0, resolution=1.0, power=0.175, minDelay=0}
+Timestamp: 1664835521610
+Battery Level: 25%
+Internal Temperature: null
+Ambient Light: {Sensor name="Ambient Light sensor", vendor="Elan", version=1, type=5, maxRange=27000.0, resolution=1.0, power=0.175, minDelay=0}
+Timestamp: 1664835581830
+Battery Level: 25%
+Internal Temperature: null
+Ambient Light: {Sensor name="Ambient Light sensor", vendor="Elan", version=1, type=5, maxRange=27000.0, resolution=1.0, power=0.175, minDelay=0}
+Timestamp: 1664835641620
+Battery Level: 25%
+Internal Temperature: null
+Ambient Light: {Sensor name="Ambient Light sensor", vendor="Elan", version=1, type=5, maxRange=27000.0, resolution=1.0, power=0.175, minDelay=0}
+Timestamp: 1664835701731
+Battery Level: 25%
+Internal Temperature: null
+Ambient Light: {Sensor name="Ambient Light sensor", vendor="Elan", version=1, type=5, maxRange=27000.0, resolution=1.0, power=0.175, minDelay=0}
+Timestamp: 1664835761644
+Battery Level: 25%
+Internal Temperature: null
+Ambient Light: {Sensor name="Ambient Light sensor", vendor="Elan", version=1, type=5, maxRange=27000.0, resolution=1.0, power=0.175, minDelay=0}
+Timestamp: 1664835821731
+Battery Level: 26%
+Internal Temperature: null
+Ambient Light: {Sensor name="Ambient Light sensor", vendor="Elan", version=1, type=5, maxRange=27000.0, resolution=1.0, power=0.175, minDelay=0}
+Timestamp: 1664835881681
+Battery Level: 26%
+Internal Temperature: null
+Ambient Light: {Sensor name="Ambient Light sensor", vendor="Elan", version=1, type=5, maxRange=27000.0, resolution=1.0, power=0.175, minDelay=0}
+Timestamp: 1664835944236
+Battery Level: 26%
+Internal Temperature: null
+Ambient Light: {Sensor name="Ambient Light sensor", vendor="Elan", version=1, type=5, maxRange=27000.0, resolution=1.0, power=0.175, minDelay=0}
+Timestamp: 1664836042355
+Battery Level: 26%
+Internal Temperature: null
+Ambient Light: {Sensor name="Ambient Light sensor", vendor="Elan", version=1, type=5, maxRange=27000.0, resolution=1.0, power=0.175, minDelay=0}
+Timestamp: 1664836064353
+Battery Level: 26%
+Internal Temperature: null
+Ambient Light: {Sensor name="Ambient Light sensor", vendor="Elan", version=1, type=5, maxRange=27000.0, resolution=1.0, power=0.175, minDelay=0}
+Timestamp: 1664836124364
+Battery Level: 26%
+Internal Temperature: null
+Ambient Light: {Sensor name="Ambient Light sensor", vendor="Elan", version=1, type=5, maxRange=27000.0, resolution=1.0, power=0.175, minDelay=0}
+Timestamp: 1664836235272
+Battery Level: 26%
+Internal Temperature: null
+Ambient Light: {Sensor name="Ambient Light sensor", vendor="Elan", version=1, type=5, maxRange=27000.0, resolution=1.0, power=0.175, minDelay=0}
