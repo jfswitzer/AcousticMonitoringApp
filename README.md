@@ -35,7 +35,7 @@ run-as org.nativescript.AudioMoth9 ls /data/user/0/org.nativescript.AudioMoth9/f
 -  home-page.ts
 -  AndroidManifest.xml 
 
-3. Copy the 'tasks' folder from this repo into the 'src' directory 
+3. Copy the 'tasks' folder from this 'AudioMoth9' into the 'src' directory 
 4. install the same plug-ins as before 
 
 
