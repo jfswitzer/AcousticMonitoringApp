@@ -30,12 +30,12 @@ run-as org.nativescript.AudioMoth9 ls /data/user/0/org.nativescript.AudioMoth9/f
  ```
     ns create AudioMoth
 ```
-2. Copy the code in the following files:
+2. Copy the code in the following files in 'AudioMoth9':
 -  home-view-model.ts
 -  home-page.ts
 -  AndroidManifest.xml 
 
-3. Copy the 'tasks' folder from this 'AudioMoth9' into the 'src' directory 
+3. Copy the 'tasks' folder from 'AudioMoth9' into the 'src' directory 
 4. Navigate to the app.gradle file and change minSDK version to 21
 4. install the same plug-ins as before 
 
