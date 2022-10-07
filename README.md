@@ -1,4 +1,7 @@
 # AcousticMonitoringApp
+
+## Prerequisite 
+1. Allow USB debugging on the device 
 ## Directions to start the app 
 1. Install [Nativescript](https://docs.nativescript.org/environment-setup.html#windows-android).
 
@@ -24,7 +27,7 @@ run-as org.nativescript.AudioMoth9 ls /data/user/0/org.nativescript.AudioMoth9/f
 ```
 
 
-## If gradle error appears when running app
+## If gradle error appears when running app: 
 
 1. create new app 
  ```
@@ -35,9 +38,10 @@ run-as org.nativescript.AudioMoth9 ls /data/user/0/org.nativescript.AudioMoth9/f
 -  home-page.ts
 -  AndroidManifest.xml 
 
-3. Copy the 'tasks' folder from 'AudioMoth9' into the 'src' directory 
+3. Copy the [tasks](https://github.com/juliale02/AcousticMonitoringApp/tree/main/AudioMoth9/src) folder into your 'src' directory 
 4. Navigate to the app.gradle file and change minSDK version to 21
-4. install the same plug-ins as before 
+4. Install the same plug-ins as before 
+
 
 
 
